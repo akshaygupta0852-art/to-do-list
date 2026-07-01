@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>to-do list</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+    body,
+    html {
+      height: 100%;
+      width: 100%;
+      background-color: rgb(5, 5, 67);
+    }
+    body {
+      display: flex;
+      padding: 20px;
+    }
+    nav {
+      color: white;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 20px 10px;
+      display: flex;
+      justify-content: space-between;
+      background-color: transparent;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    #taskAddBtn {
+      padding: 10px 20px;
+      background-color: transparent;
+      border: 1px solid white;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    #taskAddBtn:hover {
+      background-color: rgba(255, 255, 255, 0.18);
+    }
+    #mainContainer {
+      width: 100%;
+      height: 100%;
+      padding-top: 80px;
+      display: flex;
+      gap: 10px;
+      color: white;
+    }
+    #activeTask {
+      width: 50%;
+      height: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 30px;
+      padding: 10px 20px;
+      overflow: scroll;
+    }
+    #actionContainer {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .taskSection {
+      padding: 10px 20px;
+      overflow: scroll;
+      width: 100%;
+      height: 50%;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .taskSection::-webkit-scrollbar,
+    #activeTask::-webkit-scrollbar {
+      display: none;
+    }
+    #myDialogBox {
+      background-color: rgb(15, 15, 80);
+      min-width: 400px;
+      width: 30%;
+      height: 80%;
+      align-self: center;
+      justify-self: center;
+      padding: 30px 20px 10px 20px;
+      border-radius: 20px;
+    }
+    #addTaskForm {
+      height: 80%;
+      margin-top: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    #addTaskForm div {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    #myDialogBox input,
+    #myDialogBox textarea {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 8px;
+    }
+    #taskHead {
+      width: 100%;
+      padding: 10px 5px;
+    }
+    #taskDescription {
+      width: 100%;
+      padding: 10px 5px 0px 5px;
+    }
+    #closeDialogBtn {
+      background-color: transparent;
+      color: white;
+      position: absolute;
+      right: 20px;
+      top: 30px;
+      font-size: 22px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    #closeDialogBtn:hover {
+      color: red;
+      scale: 1.1;
+    }
+    #submitForm {
+      background-color: green;
+      color: white;
+      font-size: 13px;
+      width: 100%;
+      padding: 5px 0px;
+      cursor: pointer;
+      border: 1px solid white;
+      border-radius: 6px;
+      transition: all 0.2s linear;
+      padding: 10px;
+    }
+    #submitForm:hover {
+      opacity: 0.7;
+    }
+    .taskContainer {
+      margin-top: 10px;
+      width: 100%;
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      gap: 10px;
+      flex-direction: column;
+      border-radius: 10px;
+    }
+    .taskContainer div {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .actionBtn {
+      padding: 10px;
+      background-color: transparent;
+      border: 1px solid white;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    .deleteTask {
+      background-color: #ef4444;
+    }
+    .compTask {
+      background-color: #22c55e;
+    }
+    .deleteTask:hover {
+      background-color: rgba(255, 0, 0, 0.6);
+    }
+    .compTask:hover {
+      background-color: rgba(0, 255, 0, 0.6);
+    }
+  </style>
+  <body>
+    <nav>
+      <h1>To-do list</h1>
+      <button type="button" id="taskAddBtn">Add task</button>
+    </nav>
+    <div id="mainContainer">
+      <div id="activeTask"></div>
+      <div id="actionContainer">
+        <div id="compTask" class="taskSection"></div>
+        <div id="deletedTask" class="taskSection"></div>
+      </div>
+    </div>
+    <dialog id="myDialogBox">
+      <button id="closeDialogBtn" type="button">X</button>
+      <form id="addTaskForm">
+        <div>
+          <input
+            type="text"
+            id="taskHead"
+            placeholder="Enter task heading here..."
+            required
+          />
+          <textarea
+            placeholder="Enter task description here..."
+            id="taskDescription"
+            required
+          ></textarea>
+        </div>
+        <button id="submitForm" type="submit">Add task</button>
+      </form>
+    </dialog>
+  </body>
+  <script>
+    // Initialization
+
+    const addTaskBtn = document.querySelector("#taskAddBtn");
+    const dialogBox = document.querySelector("#myDialogBox");
+    const clsDialogBtn = document.querySelector("#closeDialogBtn");
+    const submitBtn = document.querySelector("#submitForm");
+    const activeBox = document.querySelector("#activeTask");
+    const compBox = document.querySelector("#compTask");
+    const delBox = document.querySelector("#deletedTask");
+    const taskHeading = document.querySelector("#taskHead");
+    const taskDes = document.querySelector("#taskDescription");
+    const taskArray = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    // Dialog show and close Modal
+
+    addTaskBtn.addEventListener("click", () => {
+      dialogBox.showModal();
+    });
+    clsDialogBtn.addEventListener("click", () => {
+      dialogBox.close();
+    });
+
+    // load task function
+
+    function loadTasks() {
+      activeBox.innerHTML = "<h1>Active Tasks</h1>";
+      compBox.innerHTML = "<h3>Completed Task</h3>";
+      delBox.innerHTML = "<h3>Deleted Task</h3>";
+      if (taskArray.length == 0) {
+        activeBox.innerHTML += `<center><h1 style="margin-top: 30px">No active tasks right now </h1></center>`;
+        return;
+      }
+      taskArray.forEach((task, index) => {
+        if (!task.isComp && !task.isDel) {
+          activeBox.innerHTML += `<div class="taskContainer">
+            <h3 style='text-transform: capitalize'>${task.name}</h3>
+            <p>${task.description}</p>
+            <div class="btnContainer" idx=${index} data-name=${task.name} data-des=${task.description}>
+              <button type="button" class="compTask actionBtn">
+                Mark as done
+              </button>
+              <button type="button" class="deleteTask actionBtn">
+                Abort this task
+              </button>
+            </div>
+          </div>`;
+        } else if (task.isComp && !task.isDel) {
+          compBox.innerHTML += `<div class="taskContainer">
+            <h3 style='text-transform: capitalize'>${task.name}</h3>
+            <p>${task.description}</p></div>`;
+        } else if (!task.isComp && task.isDel) {
+          delBox.innerHTML += `<div class="taskContainer">
+            <h3 style='text-transform: capitalize'>${task.name}</h3>
+            <p>${task.description}</p>
+          </div>`;
+        }
+      });
+    }
+
+    // Add task button
+
+    submitBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      if (!taskHeading.value || !taskDes.value) return;
+      const task = {
+        name: taskHeading.value,
+        description: taskDes.value,
+        isComp: false,
+        isDel: false,
+      };
+      taskArray.push(task);
+      localStorage.setItem("tasks", JSON.stringify(taskArray));
+      console.log(JSON.parse(localStorage.getItem("tasks")));
+      taskHeading.value = "";
+      taskDes.value = "";
+      dialogBox.close();
+      loadTasks();
+      location.reload();
+    });
+
+    loadTasks();
+
+    // Complete task and delete task
+
+    const compBtn = document.querySelectorAll(".compTask");
+    const delBtn = document.querySelectorAll(".deleteTask");
+
+    compBtn.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const parentElem = btn.parentElement;
+        const idx = parentElem.getAttribute("idx");
+        taskArray[idx].isComp = true;
+        localStorage.setItem("tasks", JSON.stringify(taskArray));
+        loadTasks();
+        location.reload();
+      });
+    });
+    delBtn.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const parentElem = btn.parentElement;
+        const idx = parentElem.getAttribute("idx");
+        taskArray[idx].isDel = true;
+        localStorage.setItem("tasks", JSON.stringify(taskArray));
+        loadTasks();
+        location.reload();
+      });
+    });
+  </script>
+</html>
