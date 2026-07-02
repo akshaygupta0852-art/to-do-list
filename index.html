@@ -337,40 +337,19 @@
     // Active task function
 
     function countActiveTask() {
-      let x = 0;
-      for (let index = 0; index < taskArray.length; index++) {
-        if (
-          taskArray[index].isComp == false &&
-          taskArray[index].isDel == false
-        ) {
-          x++;
-        }
-      }
-      return x;
+      return taskArray.filter(task => !task.isComp && !task.isDel).length;
     }
 
     // count completed task function
 
     function countCompTask() {
-      let x = 0;
-      for (let index = 0; index < taskArray.length; index++) {
-        if (taskArray[index].isComp == true) {
-          x++;
-        }
-      }
-      return x;
+      return taskArray.filter(task => task.isComp).length;
     }
 
     // count deleted task function
 
     function countDelTask() {
-      let x = 0;
-      for (let index = 0; index < taskArray.length; index++) {
-        if (taskArray[index].isDel == true) {
-          x++;
-        }
-      }
-      return x;
+      return taskArray.filter(task => task.isDel).length;
     }
 
     // load task function
