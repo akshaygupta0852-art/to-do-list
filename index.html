@@ -10,7 +10,8 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+      font-family:
+        "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
     }
     body,
     html {
@@ -30,6 +31,7 @@
       width: 100%;
       padding: 20px 10px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
       background-color: transparent;
       border-bottom: 1px solid rgba(255, 255, 255, 0.4);
@@ -114,6 +116,8 @@
     }
     #taskDescription {
       width: 100%;
+      max-width: 100%;
+      max-height: 120px;
       padding: 10px 5px 0px 5px;
     }
     #closeDialogBtn {
@@ -183,10 +187,84 @@
     .compTask:hover {
       background-color: rgba(0, 255, 0, 0.6);
     }
+    #dateContainer {
+      font-size: 22px;
+      letter-spacing: 1px;
+    }
+    #editTaskDialog {
+      background-color: rgb(15, 15, 80);
+      min-width: 400px;
+      width: 30%;
+      height: 80%;
+      align-self: center;
+      justify-self: center;
+      padding: 30px 20px 10px 20px;
+      border-radius: 20px;
+    }
+    #closeEditDialog {
+      background-color: transparent;
+      color: white;
+      position: absolute;
+      right: 20px;
+      top: 30px;
+      font-size: 22px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+    #closeEditDialog:hover {
+      color: red;
+      scale: 1.1;
+    }
+    #editFormText {
+      width: 100%;
+      max-width: 100%;
+      max-height: 120px;
+      padding: 10px 5px 0px 5px;
+    }
+    #editTaskForm {
+      height: 80%;
+      margin-top: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    #editTaskForm div {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    #editTaskForm input,
+    #editTaskForm textarea {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      border-radius: 8px;
+    }
+    #editFormInput {
+      width: 100%;
+      padding: 10px 5px;
+    }
+    #editForm {
+      background-color: purple;
+      color: white;
+      font-size: 13px;
+      width: 100%;
+      padding: 5px 0px;
+      cursor: pointer;
+      border: 1px solid white;
+      border-radius: 6px;
+      transition: all 0.2s linear;
+      padding: 10px;
+    }
+    #editForm:hover {
+      opacity: 0.7;
+    }
   </style>
   <body>
     <nav>
       <h1>To-do list</h1>
+      <div id="dateContainer"></div>
       <button type="button" id="taskAddBtn">Add task</button>
     </nav>
     <div id="mainContainer">
@@ -215,6 +293,19 @@
         <button id="submitForm" type="submit">Add task</button>
       </form>
     </dialog>
+
+    <!-- edit task dialog -->
+
+    <dialog id="editTaskDialog">
+      <button id="closeEditDialog" type="button">&times;</button>
+      <form id="editTaskForm">
+        <div>
+          <input type="text" id="editFormInput" />
+          <textarea id="editFormText"></textarea>
+        </div>
+        <button id="editForm" type="submit">Confirm edit</button>
+      </form>
+    </dialog>
   </body>
   <script>
     // Initialization
@@ -228,7 +319,11 @@
     const delBox = document.querySelector("#deletedTask");
     const taskHeading = document.querySelector("#taskHead");
     const taskDes = document.querySelector("#taskDescription");
+    const dateContainer = document.querySelector("#dateContainer");
+    const editDialog = document.querySelector("#editTaskDialog");
+    const closeEditDialog = document.querySelector("#closeEditDialog");
     const taskArray = JSON.parse(localStorage.getItem("tasks")) || [];
+    const today = new Date();
 
     // Dialog show and close Modal
 
@@ -239,12 +334,51 @@
       dialogBox.close();
     });
 
+    // Active task function
+
+    function countActiveTask() {
+      let x = 0;
+      for (let index = 0; index < taskArray.length; index++) {
+        if (
+          taskArray[index].isComp == false &&
+          taskArray[index].isDel == false
+        ) {
+          x++;
+        }
+      }
+      return x;
+    }
+
+    // count completed task function
+
+    function countCompTask() {
+      let x = 0;
+      for (let index = 0; index < taskArray.length; index++) {
+        if (taskArray[index].isComp == true) {
+          x++;
+        }
+      }
+      return x;
+    }
+
+    // count deleted task function
+
+    function countDelTask() {
+      let x = 0;
+      for (let index = 0; index < taskArray.length; index++) {
+        if (taskArray[index].isDel == true) {
+          x++;
+        }
+      }
+      return x;
+    }
+
     // load task function
 
     function loadTasks() {
-      activeBox.innerHTML = "<h1>Active Tasks</h1>";
-      compBox.innerHTML = "<h3>Completed Task</h3>";
-      delBox.innerHTML = "<h3>Deleted Task</h3>";
+      activeBox.innerHTML = `<div style="display:flex;justify-content:space-between;align-items:center;"><h1>Active Tasks</h1><span style="font-size:23px;">${countActiveTask() || 0} active tasks</span></div>`;
+      compBox.innerHTML = `<div style="display:flex; justify-content: space-between; align-items: center;"><h3>Completed Task</h3><span style="font-size : 20px">${countCompTask() || 0} task completed</span></div>`;
+      delBox.innerHTML = `<div style="display:flex; justify-content: space-between; align-items: center"><h3>Deleted Task</h3><span style="font-size:20px;">${countDelTask() || 0} task deleted</span></div>`;
       if (taskArray.length == 0) {
         activeBox.innerHTML += `<center><h1 style="margin-top: 30px">No active tasks right now </h1></center>`;
         return;
@@ -255,6 +389,7 @@
             <h3 style='text-transform: capitalize'>${task.name}</h3>
             <p>${task.description}</p>
             <div class="btnContainer" idx=${index} data-name=${task.name} data-des=${task.description}>
+              <button type="button" class="editTask actionBtn">Edit task</button>
               <button type="button" class="compTask actionBtn">
                 Mark as done
               </button>
@@ -275,6 +410,9 @@
         }
       });
     }
+    // date and time
+
+    dateContainer.innerHTML = `<span>${today.getDate()}/${today.getMonth()}/${today.getFullYear()}</span>`;
 
     // Add task button
 
@@ -304,6 +442,8 @@
 
     const compBtn = document.querySelectorAll(".compTask");
     const delBtn = document.querySelectorAll(".deleteTask");
+    const editBtn = document.querySelectorAll(".editTask");
+    const cnfrmEdit = document.querySelector("#editForm");
 
     compBtn.forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -324,6 +464,31 @@
         loadTasks();
         location.reload();
       });
+    });
+    editBtn.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const parentElement = btn.parentElement;
+        const taskNameForEdit = parentElement.getAttribute("data-name");
+        const taskDesForEdit = parentElement.getAttribute("data-des");
+        const taskIdxEdit = parentElement.getAttribute("idx");
+        editDialog.showModal();
+        document.querySelector("#editFormInput").value = taskNameForEdit;
+        document.querySelector("#editFormText").value = taskDesForEdit;
+        document
+          .querySelector("#editTaskForm")
+          .setAttribute("idx", taskIdxEdit);
+      });
+    });
+    closeEditDialog.addEventListener("click", () => {
+      editDialog.close();
+    });
+    cnfrmEdit.addEventListener("click", (e) => {
+      e.preventDefault();
+      const i = cnfrmEdit.parentElement.getAttribute("idx");
+      taskArray[i].name = document.querySelector("#editFormInput").value;
+      taskArray[i].description = document.querySelector("#editFormText").value;
+      loadTasks();
+      editDialog.close();
     });
   </script>
 </html>
