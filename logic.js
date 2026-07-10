@@ -156,6 +156,7 @@
       const i = cnfrmEdit.parentElement.getAttribute("idx");
       taskArray[i].name = document.querySelector("#editFormInput").value;
       taskArray[i].description = document.querySelector("#editFormText").value;
+      localStorage.setItem('tasks', JSON.stringify(taskArray))
       loadTasks();
       editDialog.close();
     });
